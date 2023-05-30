@@ -1,0 +1,11 @@
+>>> df_movie.createOrReplaceTempView("movies")
+>>> spark.sql("select movie_id, title, substring(title, -5,4) as year, genres from movies").createOrReplaceTempView("movies_new")
+>>> spark.sql("select movie_id,title,genres,year from movies_new m1 where m1.year = (select min(m2.year) from movies_new m2)").show()
+
++--------+--------------------+---------------+----+
+|movie_id|               title|         genres|year|
++--------+--------------------+---------------+----+
+|    2821|Male and Female (...|Adventure|Drama|1919|
+|    2823|Spiders, The (Die...|   Action|Drama|1919|
+|    3132|Daddy Long Legs (...|         Comedy|1919|
++--------+--------------------+---------------+----+
