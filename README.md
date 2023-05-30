@@ -17,7 +17,7 @@ The MovieLens dataset used in this project contains a million records of user ra
 ## How to Use
 To use this project, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/movie-analytics-spark-python.git`
+1. Clone the repository: `https://github.com/NarveerDhariwal/Movie-Analytics-project.git`
 2. Set up the Spark environment and ensure that you have the required dependencies.
 3. Launch the pyspark shell: `pyspark`
 4. Navigate to the directory containing the project files.
