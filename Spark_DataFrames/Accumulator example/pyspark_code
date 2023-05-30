@@ -1,0 +1,36 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import substring, col
+
+# Create a SparkSession
+spark = SparkSession.builder.getOrCreate()
+
+# Create two sample DataFrames
+df_movie = spark.read.option("header", "False").option("delimiter","::").option("inferSchema","true").csv("/config/workspace/movies.dat")
+
+column_names = ["movie_id","title","genres"]
+df_movie = df_movie.toDF(*column_names)
+
+# Create an accumulator for counting
+count_accumulator = spark.sparkContext.accumulator(0)
+
+# Find number of movies released between year 1920 to 1930
+
+df_movie_with_year = df_movie.withColumn("year", substring('title', -5, 4).cast("int"))
+
+df_movie_with_year.filter(col("year")== 1920).show()
+df_movie_with_year.foreach(lambda row: count_accumulator.add(1) if row.year == 1920 else None)
+
+v = count_accumulator.value
+print(v)
+
+Result:
+23/05/27 14:37:24 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
++--------+--------------------+------+----+
+|movie_id|               title|genres|year|
++--------+--------------------+------+----+
+|    3231| Saphead, The (1920)|Comedy|1920|
+|    3309|Dog's Life, A (1920)|Comedy|1920|
++--------+--------------------+------+----+
+
+2              
+
