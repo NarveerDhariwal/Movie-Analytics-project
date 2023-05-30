@@ -1,0 +1,26 @@
+Using RDD:
+>>> rdd = sc.textFile("/config/workspace/movies.dat")
+>>> rdd2 = rdd.map(lambda line: line.split("::"))
+>>> movie_name = rdd2.filter(lambda x: x[1][0].isdigit())
+>>> movie_name.first()
+['408', '8 Seconds (1994)', 'Drama']
+>>> movie_count = rdd2.filter(lambda x: x[1][0].isdigit() or x[1][0].isalpha()).count()
+>>> print(movie_count)
+3878
+
+
+
+Using DF to find movies starting with number 1:
+
+>>> df_movie.filter(col('title').startswith('1')).distinct().show()
++--------+--------------------+--------------------+
+|movie_id|               title|              genres|
++--------+--------------------+--------------------+
+|    2572|10 Things I Hate ...|      Comedy|Romance|
+|    1367|101 Dalmatians (1...|   Children's|Comedy|
+|     889|        1-900 (1994)|             Romance|
+|    2085|101 Dalmatians (1...|Animation|Children's|
+|    1609|          187 (1997)|               Drama|
+|    2826|13th Warrior, The...|Action|Horror|Thr...|
+|    1203| 12 Angry Men (1957)|               Drama|
++--------+--------------------+--------------------+
