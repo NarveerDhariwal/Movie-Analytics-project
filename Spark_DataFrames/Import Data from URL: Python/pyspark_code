@@ -1,0 +1,70 @@
+>>> import pandas as pd
+>>> url = "https://raw.githubusercontent.com/NarveerDhariwal/ND_Big-Data/main/users.dat"
+>>> df = pd.read_csv(url, sep="::", engine="python", header=None)
+>>> df.head()
+   0  1   2   3      4
+0  1  F   1  10  48067
+1  2  M  56  16  70072
+2  3  M  25  15  55117
+3  4  M  45   7  02460
+4  5  M  25  20  55455
+
+>>> schema = StructType([
+...     StructField("user_id", IntegerType(), nullable=True),
+...     StructField("gender", StringType(), nullable=True),
+...     StructField("age", IntegerType(), nullable=True),
+...     StructField("occupation", IntegerType(), nullable=True),
+...     StructField("zip_code", StringType(), nullable=True)
+... ])
+>>> spark_df = spark.createDataFrame(df, schema=schema)
+
+>>> spark_df.show()
++-------+------+---+----------+--------+                                        
+|user_id|gender|age|occupation|zip_code|
++-------+------+---+----------+--------+
+|      1|     F|  1|        10|   48067|
+|      2|     M| 56|        16|   70072|
+|      3|     M| 25|        15|   55117|
+|      4|     M| 45|         7|   02460|
+|      5|     M| 25|        20|   55455|
+|      6|     F| 50|         9|   55117|
+|      7|     M| 35|         1|   06810|
+|      8|     M| 25|        12|   11413|
+|      9|     M| 25|        17|   61614|
+|     10|     F| 35|         1|   95370|
+|     11|     F| 25|         1|   04093|
+|     12|     M| 25|        12|   32793|
+|     13|     M| 45|         1|   93304|
+|     14|     M| 35|         0|   60126|
+|     15|     M| 25|         7|   22903|
+|     16|     F| 35|         0|   20670|
+|     17|     M| 50|         1|   95350|
+|     18|     F| 18|         3|   95825|
+|     19|     M|  1|        10|   48073|
+|     20|     M| 25|        14|   55113|
++-------+------+---+----------+--------+
+only showing top 20 rows
+
+>>> spark_df.printSchema()
+root
+ |-- user_id: integer (nullable = true)
+ |-- gender: string (nullable = true)
+ |-- age: integer (nullable = true)
+ |-- occupation: integer (nullable = true)
+ |-- zip_code: string (nullable = true)
+
+
+>>> from pyspark.sql.functions import *
+>>> spark_df.withColumn('zip_code', col('zip_code').cast('int'))
+DataFrame[user_id: int, gender: string, age: int, occupation: int, zip_code: int]
+
+>>> spark_df = spark_df.withColumn('zip_code', col('zip_code').cast('int'))
+
+>>> spark_df.printSchema()
+root
+ |-- user_id: integer (nullable = true)
+ |-- gender: string (nullable = true)
+ |-- age: integer (nullable = true)
+ |-- occupation: integer (nullable = true)
+ |-- zip_code: integer (nullable = true)
+
