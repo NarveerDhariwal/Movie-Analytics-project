@@ -1,0 +1,55 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import broadcast
+import time
+
+# Create a SparkSession
+spark = SparkSession.builder.getOrCreate()
+
+# Create two sample DataFrames
+df_movie = spark.read.option("header", "False").option("delimiter","::").option("inferSchema","true").csv("/movies.dat")
+df_rating = spark.read.option("header", "False").option("delimiter","::").option("inferSchema","true").csv("/ratings.dat")
+
+column_rating = ["user_id", "movie_id", "rating", "timestamp"]
+df_rating = df_rating.toDF(*column_rating)
+
+column_names = ["movie_id","title","genres"]
+df_movie = df_movie.toDF(*column_names)
+
+# Defining broadcast dataframe
+broadcast_movie_df = broadcast(df_movie)
+
+# Capture the start timestamp
+start_time_normal_df = time.time()
+
+# Perform full join on the 'movie_id' column
+df_full_join = df_rating.join(df_movie, on = "movie_id", how = "full")
+
+# Capture the end timestamp
+end_time_normal_df = time.time()
+
+# Capture start time
+start_time_broadcast_df = time.time()
+
+#Perform full join on broadcast df
+sd_broadcast_full_join  = df_rating.join(broadcast_movie_df, on = "movie_id", how = "full")
+
+# Capture the end timestamp
+end_time_broadcast_df = time.time()
+
+# Calculate the time taken
+
+time_taken_normal = end_time_normal_df - start_time_normal_df
+time_taken_broadcast = end_time_broadcast_df - start_time_broadcast_df
+
+# Show the result
+#df_full_join.show()
+
+# Print the time taken
+print(f"Time taken by normal join operation: {time_taken_normal} seconds")
+print(f"Time taken by broadcast join operation: {time_taken_broadcast} seconds")
+
+
+Result: 
+
+Time taken by normal join operation: 0.03211832046508789 seconds                
+Time taken by broadcast join operation: 0.017490625381469727 seconds
