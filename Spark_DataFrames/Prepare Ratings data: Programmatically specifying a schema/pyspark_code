@@ -1,0 +1,39 @@
+>>> from pyspark.sql.types import StructType, StructField, IntegerType, LongType, FloatType
+>>> from pyspark.sql.functions import split, col
+>>> file_location = "/ratings.dat"
+>>> schema = StructType([
+...     StructField("user_id", IntegerType(), nullable=False),
+...     StructField("movie_id", IntegerType(), nullable=False),
+...     StructField("rating", FloatType(), nullable=False),
+...     StructField("timestamp", LongType(), nullable=False)
+... ])
+
+>>> df = spark.read \
+...     .option("sep", "::") \
+...     .csv(file_location, schema=schema)
+>>> df.show()
+\\+-------+--------+------+---------+
+|user_id|movie_id|rating|timestamp|
++-------+--------+------+---------+
+|      1|     661|   3.0|978302109|
+|      1|     914|   3.0|978301968|
+|      1|    3408|   4.0|978300275|
+|      1|    2355|   5.0|978824291|
+|      1|    1197|   3.0|978302268|
+|      1|    1287|   5.0|978302039|
+|      1|    2804|   5.0|978300719|
+|      1|     594|   4.0|978302268|
+|      1|     919|   4.0|978301368|
+|      1|     595|   5.0|978824268|
+|      1|     938|   4.0|978301752|
+|      1|    2398|   4.0|978302281|
+|      1|    2918|   4.0|978302124|
+|      1|    1035|   5.0|978301753|
+|      1|    2791|   4.0|978302188|
+|      1|    2687|   3.0|978824268|
+|      1|    2018|   4.0|978301777|
+|      1|    3105|   5.0|978301713|
+|      1|    2797|   4.0|978302039|
+|      1|    2321|   3.0|978302205|
++-------+--------+------+---------+
+only showing top 20 rows
