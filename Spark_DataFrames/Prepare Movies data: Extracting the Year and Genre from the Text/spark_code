@@ -1,0 +1,54 @@
+>>> df_movie = spark.read \
+...      .option("delimiter", "::") \
+...     .option("header", False) \
+...     .option("inferSchema", True) \
+...      .format("csv") \
+...      .load("/movies.dat")
+>>> column_names = ["movie_id","title","genres"]                                
+>>> df_movie = df_movie.toDF(*column_names)
+>>> df_movie.show()
++--------+--------------------+--------------------+
+|movie_id|               title|              genres|
++--------+--------------------+--------------------+
+|       1|    Toy Story (1995)|Animation|Childre...|
+|       2|      Jumanji (1995)|Adventure|Childre...|
+|       3|Grumpier Old Men ...|      Comedy|Romance|
+|       4|Waiting to Exhale...|        Comedy|Drama|
+|       5|Father of the Bri...|              Comedy|
+|       6|         Heat (1995)|Action|Crime|Thri...|
+|       7|      Sabrina (1995)|      Comedy|Romance|
+|       8| Tom and Huck (1995)|Adventure|Children's|
+|       9| Sudden Death (1995)|              Action|
+|      10|    GoldenEye (1995)|Action|Adventure|...|
+|      11|American Presiden...|Comedy|Drama|Romance|
+|      12|Dracula: Dead and...|       Comedy|Horror|
+|      13|        Balto (1995)|Animation|Children's|
+|      14|        Nixon (1995)|               Drama|
+|      15|Cutthroat Island ...|Action|Adventure|...|
+|      16|       Casino (1995)|      Drama|Thriller|
+|      17|Sense and Sensibi...|       Drama|Romance|
+|      18|   Four Rooms (1995)|            Thriller|
+|      19|Ace Ventura: When...|              Comedy|
+|      20|  Money Train (1995)|              Action|
++--------+--------------------+--------------------+
+only showing top 20 rows
+
+>>> from pyspark.sql.functions import col, min, max, sum, substring
+
+>>> df1 = df_movie.withColumn('year', substring('title', -5, 4).cast('int')).select(col('genres'), col('year'))
+>>> df1.printSchema()
+root
+ |-- genres: string (nullable = true)
+ |-- year: integer (nullable = true)
+
+>>> df1.show(5)
++--------------------+----+
+|              genres|year|
++--------------------+----+
+|Animation|Childre...|1995|
+|Adventure|Childre...|1995|
+|      Comedy|Romance|1995|
+|        Comedy|Drama|1995|
+|              Comedy|1995|
++--------------------+----+
+only showing top 5 rows
