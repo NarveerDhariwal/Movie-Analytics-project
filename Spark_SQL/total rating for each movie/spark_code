@@ -1,0 +1,26 @@
+>>> spark.sql("select movie_id, sum(rating) as total_rating_per_movie from ratings group by movie_id order by total_rating_per_movie").show()
++--------+----------------------+                                               
+|movie_id|total_rating_per_movie|
++--------+----------------------+
+|     142|                     1|
+|    3209|                     1|
+|     826|                     1|
+|    3904|                     1|
+|     730|                     1|
+|    1165|                     1|
+|     641|                     1|
+|    1386|                     1|
+|     684|                     1|
+|    1115|                     1|
+|    3312|                     1|
+|     655|                     1|
+|    2039|                     1|
+|    2213|                     1|
+|    3202|                     1|
+|    2217|                     1|
+|    3237|                     1|
+|    1430|                     1|
+|    3376|                     1|
+|     133|                     1|
++--------+----------------------+
+only showing top 20 rows
