@@ -1,0 +1,19 @@
+>>> df_user = spark.read \
+...      .option("delimiter", "::") \
+...     .option("header", False) \
+...     .option("inferSchema", True) \
+...      .format("csv") \
+...      .load("/users.dat")
+>>> column_names = ["user_id", "gender", "age", "occupation", "zip_code"]
+>>> df_user = df_user.toDF(*column_names)
+>>> df_user.show(5)
++-------+------+---+----------+--------+
+|user_id|gender|age|occupation|zip_code|
++-------+------+---+----------+--------+
+|      1|     F|  1|        10|   48067|
+|      2|     M| 56|        16|   70072|
+|      3|     M| 25|        15|   55117|
+|      4|     M| 45|         7|   02460|
+|      5|     M| 25|        20|   55455|
++-------+------+---+----------+--------+
+only showing top 5 rows
