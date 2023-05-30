@@ -1,0 +1,80 @@
+5) List the latest released movies
+
+
+Using RDD:
+
+>>> rdd = sc.textFile("/config/workspace/movies.dat")
+>>> rdd2 = rdd.map(lambda line: line.split("::"))
+>>> rdd3_year =  rdd2.map(lambda x: (x[0],x[1],x[2], int(x[1][-5:-1])))
+>>> rdd3_year.first()
+('1', 'Toy Story (1995)', "Animation|Children's|Comedy", 1995)
+>>> rdd4_sort = rdd3_year.sortBy(lambda x: x[3], ascending = False)
+>>> rdd4_sort.take(10)
+[('3190', 'Supernova (2000)', 'Adventure|Sci-Fi', 2000), ('3225', 'Down to You (2000)', 'Comedy|Romance', 2000), ('3239', "Isn't She Great? (2000)", 'Comedy', 2000), ('3273', 'Scream 3 (2000)', 'Horror|Mystery|Thriller', 2000), ('3276', 'Gun Shy (2000)', 'Comedy', 2000), ('3285', 'Beach, The (2000)', 'Adventure|Drama', 2000), ('3286', 'Snow Day (2000)', 'Comedy', 2000), ('3287', 'Tigger Movie, The (2000)', "Animation|Children's", 2000), ('3291', 'Trois (2000)', 'Thriller', 2000), ('3298', 'Boiler Room (2000)', 'Drama', 2000)]
+>>> 
+
+
+
+Using DF:
+
+>>> from pyspark.sql.functions import substring
+>>> df_movie_new = df_movie.withColumn('year', substring(df_movie['title'], -5,4).cast("int"))
+>>> df_movie_new.show()
++--------+--------------------+--------------------+----+                       
+|movie_id|               title|              genres|year|
++--------+--------------------+--------------------+----+
+|       1|    Toy Story (1995)|Animation|Childre...|1995|
+|       2|      Jumanji (1995)|Adventure|Childre...|1995|
+|       3|Grumpier Old Men ...|      Comedy|Romance|1995|
+|       4|Waiting to Exhale...|        Comedy|Drama|1995|
+|       5|Father of the Bri...|              Comedy|1995|
+|       6|         Heat (1995)|Action|Crime|Thri...|1995|
+|       7|      Sabrina (1995)|      Comedy|Romance|1995|
+|       8| Tom and Huck (1995)|Adventure|Children's|1995|
+|       9| Sudden Death (1995)|              Action|1995|
+|      10|    GoldenEye (1995)|Action|Adventure|...|1995|
+|      11|American Presiden...|Comedy|Drama|Romance|1995|
+|      12|Dracula: Dead and...|       Comedy|Horror|1995|
+|      13|        Balto (1995)|Animation|Children's|1995|
+|      14|        Nixon (1995)|               Drama|1995|
+|      15|Cutthroat Island ...|Action|Adventure|...|1995|
+|      16|       Casino (1995)|      Drama|Thriller|1995|
+|      17|Sense and Sensibi...|       Drama|Romance|1995|
+|      18|   Four Rooms (1995)|            Thriller|1995|
+|      19|Ace Ventura: When...|              Comedy|1995|
+|      20|  Money Train (1995)|              Action|1995|
++--------+--------------------+--------------------+----+
+only showing top 20 rows
+
+>>> max_year = df_movie_new.select(max(col("year"))).first()[0]
+>>> print(max_year)
+2000
+>>> df_movie_new.filter(col("year") == max_year).show()
++--------+--------------------+--------------------+----+
+|movie_id|               title|              genres|year|
++--------+--------------------+--------------------+----+
+|    3190|    Supernova (2000)|    Adventure|Sci-Fi|2000|
+|    3225|  Down to You (2000)|      Comedy|Romance|2000|
+|    3239|Isn't She Great? ...|              Comedy|2000|
+|    3273|     Scream 3 (2000)|Horror|Mystery|Th...|2000|
+|    3276|      Gun Shy (2000)|              Comedy|2000|
+|    3285|   Beach, The (2000)|     Adventure|Drama|2000|
+|    3286|     Snow Day (2000)|              Comedy|2000|
+|    3287|Tigger Movie, The...|Animation|Children's|2000|
+|    3291|        Trois (2000)|            Thriller|2000|
+|    3298|  Boiler Room (2000)|               Drama|2000|
+|    3299|   Hanging Up (2000)|        Comedy|Drama|2000|
+|    3300|  Pitch Black (2000)|       Action|Sci-Fi|2000|
+|    3301|Whole Nine Yards,...|        Comedy|Crime|2000|
+|    3316|Reindeer Games (2...|     Action|Thriller|2000|
+|    3317|  Wonder Boys (2000)|        Comedy|Drama|2000|
+|    3321|Waiting Game, The...|              Comedy|2000|
+|    3322|    3 Strikes (2000)|              Comedy|2000|
+|    3323|Chain of Fools (2...|        Comedy|Crime|2000|
+|    3324|Drowning Mona (2000)|              Comedy|2000|
+|    3325|Next Best Thing, ...|        Comedy|Drama|2000|
++--------+--------------------+--------------------+----+
+only showing top 20 rows
+
+>>> df_movie_new.filter(col("year") == max_year).count()
+156
